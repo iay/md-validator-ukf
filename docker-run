@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker run -d --restart=always -p 8080:8080 --name md-validator-ukf \
+    iay/md-validator-ukf
