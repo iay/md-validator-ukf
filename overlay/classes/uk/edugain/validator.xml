@@ -9,6 +9,16 @@
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
+    <!--
+        Import inc-mda beans.
+    -->
+    <import resource="classpath:uk/org/iay/incommon/mda/beans.xml"/>
+
+    <!--
+        Import UK federation ingress policy for eduGAIN.
+    -->
+    <import resource="classpath:uk/edugain-policy.xml"/>
+
     <!-- *** Default Shibboleth component bean id property from Spring bean id *** -->
     <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" lazy-init="false"/>
 
@@ -18,6 +28,8 @@
     <bean id="pipeline" parent="mda.SimplePipeline">
         <property name="stages">
             <list>
+                <ref bean="standardImportActions"/>
+                <ref bean="edugainPolicy"/>
             </list>
         </property>
     </bean>

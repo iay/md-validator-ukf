@@ -1051,4 +1051,169 @@
     <bean id="check_bindings" parent="mda.XSLValidationStage"
         p:XSLResource="classpath:_rules/check_bindings.xsl"/>
 
+    <!--
+        ***********************
+        ***                 ***
+        ***   I M P O R T   ***
+        ***                 ***
+        ***********************
+    -->
+
+    <!--
+        cleanImport
+
+        A pipeline stage that can be used in an import pipeline to clean up the metadata
+        presented, for example by removing redundant attributes or elements which only have
+        meaning when added by the UK federation registrar.
+    -->
+    <bean id="cleanImport" parent="mda.XSLTransformationStage"
+        p:XSLResource="classpath:clean-import.xsl"/>
+
+    <!--
+        trimImportElementWhitespace
+
+        Trim whitespace from the specified elements in imported
+        entities.  These would be errors in UK-registered metadata,
+        but repairing the metadata on the fly is often easier than
+        asking for it to be corrected at source.
+    -->
+    <bean id="trimImportElementWhitespace" parent="mda.ElementWhitespaceTrimmingStage">
+        <property name="elementNames">
+            <set>
+                <ref bean="md-AdditionalMetadataLocation"/>
+                <ref bean="md-AttributeProfile"/>
+                <ref bean="md-Company"/>
+                <ref bean="md-EmailAddress"/>
+                <ref bean="md-GivenName"/>
+                <ref bean="md-NameIDFormat"/>
+                <ref bean="md-OrganizationDisplayName"/>
+                <ref bean="md-OrganizationName"/>
+                <ref bean="md-OrganizationURL"/>
+                <ref bean="md-ServiceDescription"/>
+                <ref bean="md-ServiceName"/>
+                <ref bean="md-SurName"/>
+                <ref bean="md-TelephoneNumber"/>
+                <ref bean="mdui-GeolocationHint"/>
+                <ref bean="mdui-InformationURL"/>
+                <ref bean="mdui-Logo"/>
+                <ref bean="mdui-PrivacyStatementURL"/>
+            </set>
+        </property>
+    </bean>
+
+    <!--
+        standardImportActions
+
+        Standard actions performed on any metadata import channel.  Assumes that the
+        collection has been acquired, had its signature validated, and disassembled into
+        individual entities.
+
+        The result is a collection of entities, some of which may be labelled with
+        errors.  No announcement or removal of those entities is performed here;
+        that is left to the caller.
+    -->
+    <bean id="standardImportActions" parent="mda.CompositeStage">
+        <property name="composedStages">
+            <list>
+                <ref bean="populateItemIds"/>
+                <ref bean="populateRegistrationAuthorities"/>
+
+                <!--
+                    Strip all elements and attributes that are in namespaces
+                    other than the ones we accept from partners.
+                -->
+                <bean id="whitelistImportedNamespaces" parent="mda.NamespacesStrippingStage"
+                    p:whitelisting="true">
+                    <property name="namespaces">
+                        <set>
+                            <ref bean="alg_namespace"/>
+                            <ref bean="ds_namespace"/>
+                            <ref bean="hoksso_namespace"/>
+                            <ref bean="icmd_namespace"/>
+                            <ref bean="idpdisc_namespace"/>
+                            <ref bean="init_namespace"/>
+                            <ref bean="md_namespace"/>
+                            <ref bean="mdattr_namespace"/>
+                            <ref bean="mdrpi_namespace"/>
+                            <ref bean="mdui_namespace"/>
+                            <ref bean="remd_namespace"/>
+                            <ref bean="saml_namespace"/>
+                            <ref bean="shibmd_namespace"/>
+                            <ref bean="xenc_namespace"/>
+                            <ref bean="xml_namespace"/>
+                        </set>
+                    </property>
+                </bean>
+
+                <!--
+                    Stages that modify metadata come first, so that
+                    anything they remove is not checked later.
+                -->
+                <ref bean="cleanImport"/>
+                <ref bean="wrapX509Certificates"/>
+                <ref bean="stripAAMDUI"/>
+                <ref bean="stripMDUILogoHttp"/>
+                <ref bean="trimImportElementWhitespace"/>
+                <ref bean="stripEmptyExtensions"/>
+                <ref bean="strip_mdui_logo_length"/>
+
+                <ref bean="checkSchemas"/>
+                <ref bean="CHECK_std"/>
+                <ref bean="check_dup_display"/>
+                <ref bean="check_namespaces"/>
+
+                <bean id="checkCertificates" parent="mda.X509ValidationStage">
+                    <property name="validators">
+                        <list>
+                            <!-- Error on DSA keys. -->
+                            <bean p:id="DSA" parent="ukf.X509DSADetector"/>
+
+                            <!-- Error on RSA key length less than 2048 bits. -->
+                            <bean p:id="RSAKeyLength" parent="mda.X509RSAKeyLengthValidator"
+                                p:warningBoundary="0" p:errorBoundary="2048"/>
+                            <!-- Error on small RSA public exponents. -->
+                            <bean p:id="RSAExponent" parent="mda.X509RSAExponentValidator"/>
+                            <!-- Error on keys vulnerable to ROCA. -->
+                            <bean p:id="ROCA" parent="mda.X509ROCAValidator"/>
+
+                            <!--
+                                Debian weak key blacklists.
+
+                                Don't need to check for keys below our minimum key size.
+                            -->
+                            <ref bean="debian.2048"/>
+                            <ref bean="debian.4096"/>
+
+                            <!--
+                                Compromised key blacklists.
+
+                                Again, don't need to check for keys below our minimum key size.
+                            -->
+                            <ref bean="compromised.2048"/>
+                        </list>
+                    </property>
+                </bean>
+
+            </list>
+        </property>
+    </bean>
+
+    <!--
+        standardImportTail
+
+        Standard actions performed at the end of any metadata import flow.  As imports
+        are currently ending up in files, build an EntitiesDescriptor and normalise the
+        namespaces in the document ready for serialisation.
+    -->
+    <bean id="standardImportTail" parent="mda.CompositeStage">
+        <property name="composedStages">
+            <list>
+                <!-- announce and remove any entities with errors -->
+                <ref bean="errorAnnouncingFilter"/>
+                <ref bean="assemble"/>
+                <ref bean="normaliseNamespaces"/>
+            </list>
+        </property>
+    </bean>
+
 </beans>
