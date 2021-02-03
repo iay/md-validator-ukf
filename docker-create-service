@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#
+# Example service creation, including Traefic routing labels.
+#
+# The use-relative-redirects setting stops various problems in
+# Tomcat from affecting the results when SSL is terminated by
+# the reverse proxy, and Tomcat ends up downgrading to http.
+# The actual solution suggested by that ticket doesn't seem to
+# have any effect...
+#
+docker service create \
+  --name md-validator-basic \
+  --hostname md-validator-basic \
+  --network traefik \
+  --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 \
+  --constraint node.platform.arch==x86_64 \
+  --label traefik.enable=true \
+  --label traefik.http.services.validator-basic.loadbalancer.server.port=8080 \
+  --label traefik.http.routers.validator-basic.entrypoints=websecure \
+  --label traefik.http.routers.validator-basic.tls=true \
+  --label traefik.http.routers.validator-basic.tls.certResolver=le \
+  --label "traefik.http.routers.validator-basic.rule=Host(\`apps.iay.org.uk\`) && PathPrefix(\`/md-validator-basic\`)" \
+  --label traefik.http.routers.validator-basic.service=validator-basic \
+  --entrypoint java \
+  registry.iay.org.uk/md-validator-ukf:latest \
+  -Dserver.servlet.context-path=/md-validator-basic \
+  -Dserver.tomcat.use-relative-redirects=true \
+  org.springframework.boot.loader.JarLauncher

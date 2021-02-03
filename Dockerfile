@@ -1,11 +1,15 @@
 #
 # Dockerfile for md-validator-ukf.
 #
-# This layers configuration on top of the iay/md-validator image.
+# This layers configuration on top of the md-validator image.
 #
 
-FROM iay/md-validator
-MAINTAINER Ian Young <ian@iay.org.uk>
+#
+# Acquire the base image from Docker Hub.
+#
+FROM ianayoung/md-validator
+
+LABEL maintainer="Ian Young <ian@iay.org.uk>"
 
 WORKDIR /application
 
