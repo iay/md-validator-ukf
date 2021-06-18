@@ -14,7 +14,6 @@ docker service create \
   --hostname md-validator-basic \
   --network traefik \
   --log-driver json-file --log-opt max-size=10m --log-opt max-file=3 \
-  --constraint node.platform.arch==x86_64 \
   --label traefik.enable=true \
   --label traefik.http.services.validator-basic.loadbalancer.server.port=8080 \
   --label traefik.http.routers.validator-basic.entrypoints=websecure \
@@ -23,7 +22,7 @@ docker service create \
   --label "traefik.http.routers.validator-basic.rule=Host(\`apps.iay.org.uk\`) && PathPrefix(\`/md-validator-basic\`)" \
   --label traefik.http.routers.validator-basic.service=validator-basic \
   --entrypoint java \
-  registry.iay.org.uk/md-validator-ukf:latest \
+  ianayoung/md-validator-ukf:latest \
   -Dserver.servlet.context-path=/md-validator-basic \
   -Dserver.tomcat.use-relative-redirects=true \
   org.springframework.boot.loader.JarLauncher
