@@ -16,9 +16,9 @@ This is a multi-architecture container runnable on either `linux/amd64` (Linux
 64-bit Intel) or `linux/arm64` (Linux 64-bit ARM) platforms.
 
 There are many ways in which you might choose to deploy this container. In my
-own deployment, I use the `docker-create-service` and `docker-remove-service`
-scripts. These deploy the container as a Docker Swarm service behind a
-[Traefik][] reverse proxy, so they won't apply directly to your situation but
+own deployment, I use `docker stack deploy` and the `docker-compose-yml` file
+to deploy the container as a Docker Swarm service behind a
+[Traefik][] reverse proxy. This won't apply directly to your situation but
 might serve as a starting point.
 
 ### Container development

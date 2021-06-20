@@ -1,0 +1,49 @@
+#
+# Stack configuration for a deployment of md-validator-ukf.
+#
+
+version: "3.5"
+
+services:
+
+  validator:
+    image: ianayoung/md-validator-ukf:latest
+    entrypoint:
+      - "java"
+      - "-Dserver.servlet.context-path=/md-validator-basic"
+      #
+      # The use-relative-redirects setting stops various problems in
+      # Tomcat from affecting the results when SSL is terminated by
+      # the reverse proxy, and Tomcat ends up downgrading to http.
+      # The actual solution suggested by that ticket doesn't seem to
+      # have any effect...
+      #
+      - "-Dserver.tomcat.use-relative-redirects=true"
+      - "org.springframework.boot.loader.JarLauncher"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      mode: replicated
+      replicas: 1
+      labels:
+        # Enable the service
+        - "traefik.enable=true"
+        - "traefik.http.services.validator-basic.loadbalancer.server.port=8080"
+        # https://apps.iay.org.uk/md-validator-basic
+        - "traefik.http.routers.validator-basic.entrypoints=websecure"
+        - "traefik.http.routers.validator-basic.tls=true"
+        - "traefik.http.routers.validator-basic.tls.certResolver=le"
+        - "traefik.http.routers.validator-basic.rule=Host(`apps.iay.org.uk`) && PathPrefix(`/md-validator-basic`)"
+        - "traefik.http.routers.validator-basic.service=validator-basic"
+      placement:
+        constraints:
+          - "node.labels.type==general"
+
+networks:
+  default:
+    external: true
+    name: traefik
+
