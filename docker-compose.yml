@@ -11,14 +11,8 @@ services:
     entrypoint:
       - "java"
       - "-Dserver.servlet.context-path=/md-validator-basic"
-      #
-      # The use-relative-redirects setting stops various problems in
-      # Tomcat from affecting the results when SSL is terminated by
-      # the reverse proxy, and Tomcat ends up downgrading to http.
-      # The actual solution suggested by that ticket doesn't seem to
-      # have any effect...
-      #
-      - "-Dserver.tomcat.use-relative-redirects=true"
+      # Attend to the forwarding headers from the reverse proxy
+      - "-Dserver.forward-headers-strategy=NATIVE"
       - "org.springframework.boot.loader.JarLauncher"
     logging:
       driver: "json-file"
@@ -46,4 +40,3 @@ networks:
   default:
     external: true
     name: traefik
-
