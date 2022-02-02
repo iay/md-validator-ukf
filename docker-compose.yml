@@ -32,6 +32,8 @@ services:
         - "traefik.http.routers.validator-basic.tls.certResolver=le"
         - "traefik.http.routers.validator-basic.rule=Host(`apps.iay.org.uk`) && PathPrefix(`/md-validator-basic`)"
         - "traefik.http.routers.validator-basic.service=validator-basic"
+        # Monitor new versions of the image
+        - "diun.enable=true"
       placement:
         constraints:
           - "node.labels.type==general"
