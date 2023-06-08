@@ -130,7 +130,7 @@
         class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"/>
 
     <!-- *** Default Shibboleth component bean id property from Spring bean id *** -->
-    <bean class="net.shibboleth.ext.spring.config.IdentifiableBeanPostProcessor" lazy-init="false"/>
+    <bean parent="mda.IdentifiableBeanPostProcessor" lazy-init="false"/>
 
     <!--
         *******************************************************
@@ -1166,7 +1166,7 @@
                     <property name="validators">
                         <list>
                             <!-- Error on DSA keys. -->
-                            <bean p:id="DSA" parent="ukf.X509DSADetector"/>
+                            <bean p:id="DSA" parent="mda.X509DSADetector"/>
 
                             <!-- Error on RSA key length less than 2048 bits. -->
                             <bean p:id="RSAKeyLength" parent="mda.X509RSAKeyLengthValidator"
