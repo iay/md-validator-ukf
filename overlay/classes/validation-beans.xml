@@ -409,15 +409,15 @@
 
     <bean id="debian.1024" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="1024"
-        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/debian-1024.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/keylists/rsa/debian-1024.txt"/>
 
     <bean id="debian.2048" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="2048"
-        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/debian-2048.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/keylists/rsa/debian-2048.txt"/>
 
     <bean id="debian.4096" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="4096"
-        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/debian-4096.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/keylists/rsa/debian-4096.txt"/>
 
     <!--
         List of known compromised 1024-bit keys, e.g., "dummy" keys shipped with
@@ -425,7 +425,7 @@
     -->
     <bean id="compromised.1024" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="1024"
-        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/compromised-1024.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/keylists/rsa/compromised-1024.txt"/>
 
     <!--
         List of known compromised 2048-bit keys, e.g., "dummy" keys shipped with
@@ -433,7 +433,7 @@
     -->
     <bean id="compromised.2048" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="2048"
-        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/compromised-2048.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/keylists/rsa/compromised-2048.txt"/>
 
 
     <!--
