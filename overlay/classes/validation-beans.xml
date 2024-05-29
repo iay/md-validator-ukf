@@ -100,7 +100,7 @@
         Combines all check_future_N stages.
     -->
     <bean id="check_future" parent="mda.CompositeStage">
-        <property name="composedStages">
+        <property name="stages">
             <list>
                 <ref bean="check_future_0"/>
                 <ref bean="check_future_1"/>
@@ -169,7 +169,7 @@
         Composite check for the MDRPI specification.
     -->
     <bean id="check_mdrpi" parent="mda.CompositeStage">
-        <property name="composedStages">
+        <property name="stages">
             <list>
                 <ref bean="check_mdrpi_xslt"/>
             </list>
@@ -241,7 +241,7 @@
         Composite check for the MDUI specification.
     -->
     <bean id="check_mdui" parent="mda.CompositeStage">
-        <property name="composedStages">
+        <property name="stages">
             <list>
                 <ref bean="check_mdui_iphint"/>
                 <ref bean="check_mdui_xslt"/>
@@ -281,7 +281,7 @@
         p:XSLResource="classpath:_rules/check_rands_support.xsl"/>
 
     <bean id="check_rands" parent="mda.CompositeStage">
-        <property name="composedStages">
+        <property name="stages">
             <list>
                 <ref bean="check_rands_member"/>
                 <ref bean="check_rands_support"/>
@@ -404,36 +404,36 @@
     -->
 
     <!--
-        Debian weak key blacklists.
+        Debian weak key lists.
     -->
 
-    <bean id="debian.1024" parent="mda.X509RSAOpenSSLBlacklistValidator"
+    <bean id="debian.1024" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="1024"
-        p:blacklistResource="classpath:net/shibboleth/metadata/validate/x509/debian-1024.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/debian-1024.txt"/>
 
-    <bean id="debian.2048" parent="mda.X509RSAOpenSSLBlacklistValidator"
+    <bean id="debian.2048" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="2048"
-        p:blacklistResource="classpath:net/shibboleth/metadata/validate/x509/debian-2048.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/debian-2048.txt"/>
 
-    <bean id="debian.4096" parent="mda.X509RSAOpenSSLBlacklistValidator"
+    <bean id="debian.4096" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="4096"
-        p:blacklistResource="classpath:net/shibboleth/metadata/validate/x509/debian-4096.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/debian-4096.txt"/>
 
     <!--
-        Blacklist of known compromised 1024-bit keys, e.g., "dummy" keys shipped with
+        List of known compromised 1024-bit keys, e.g., "dummy" keys shipped with
         SAML products that are sometimes deployed by accident.
     -->
-    <bean id="compromised.1024" parent="mda.X509RSAOpenSSLBlacklistValidator"
+    <bean id="compromised.1024" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="1024"
-        p:blacklistResource="classpath:net/shibboleth/metadata/validate/x509/compromised-1024.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/compromised-1024.txt"/>
 
     <!--
-        Blacklist of known compromised 2048-bit keys, e.g., "dummy" keys shipped with
+        List of known compromised 2048-bit keys, e.g., "dummy" keys shipped with
         SAML products that are sometimes deployed by accident.
     -->
-    <bean id="compromised.2048" parent="mda.X509RSAOpenSSLBlacklistValidator"
+    <bean id="compromised.2048" parent="mda.X509RSAOpenSSLKeylistValidator"
         p:keySize="2048"
-        p:blacklistResource="classpath:net/shibboleth/metadata/validate/x509/compromised-2048.txt"/>
+        p:keylistResource="classpath:net/shibboleth/metadata/validate/x509/compromised-2048.txt"/>
 
 
     <!--
@@ -624,7 +624,7 @@
         CHECK_std
     -->
     <bean id="CHECK_std" parent="mda.CompositeStage">
-        <property name="composedStages">
+        <property name="stages">
             <list>
                 <ref bean="check_adfs"/>
                 <ref bean="check_algsupport"/>

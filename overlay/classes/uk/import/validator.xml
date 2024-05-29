@@ -29,8 +29,8 @@
                     Strip all elements and attributes that are in namespaces
                     we don't accept from registrants.
                 -->
-                <bean id="whitelistImportedNamespaces" parent="mda.NamespacesStrippingStage"
-                    p:whitelisting="true">
+                <bean id="keepImportedNamespaces" parent="mda.NamespacesStrippingStage"
+                    p:keeping="true">
                     <property name="namespaces">
                         <set>
                             <ref bean="alg_namespace"/>

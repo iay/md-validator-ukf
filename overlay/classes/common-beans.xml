@@ -54,12 +54,6 @@
         class="org.springframework.core.io.FileSystemResource"/>
 
     <!--
-        Shibboleth-defined Resource class parent bean.
-    -->
-    <bean id="HTTPResource" abstract="true"
-        class="net.shibboleth.ext.spring.resource.HTTPResource"/>
-
-    <!--
         XMLSignatureValidationStage
 
         Parent for XML Signature validation stages.
@@ -108,26 +102,6 @@
             </list>
         </property>
     </bean>
-
-    <!-- *** Parent beans for Shibboleth spring-extensions factory beans. *** -->
-
-    <bean id="DOMDocumentFactoryBean" abstract="true"
-        class="net.shibboleth.ext.spring.factory.DOMDocumentFactoryBean"/>
-
-    <bean id="PKCS11PrivateKeyFactoryBean" abstract="true"
-        class="net.shibboleth.ext.spring.factory.PKCS11PrivateKeyFactoryBean"/>
-
-    <bean id="PrivateKeyFactoryBean" abstract="true"
-        class="net.shibboleth.ext.spring.factory.PrivateKeyFactoryBean"/>
-
-    <bean id="PublicKeyFactoryBean" abstract="true"
-        class="net.shibboleth.ext.spring.factory.PublicKeyFactoryBean"/>
-
-    <bean id="X509CertificateChainFactoryBean" abstract="true"
-        class="net.shibboleth.ext.spring.factory.X509CertificateChainFactoryBean"/>
-
-    <bean id="X509CertificateFactoryBean" abstract="true"
-        class="net.shibboleth.ext.spring.factory.X509CertificateFactoryBean"/>
 
     <!-- *** Default Shibboleth component bean id property from Spring bean id *** -->
     <bean parent="mda.IdentifiableBeanPostProcessor" lazy-init="false"/>
@@ -253,7 +227,7 @@
         A NamespaceContext that assigns the usual prefix for each of the commonly used XML namespaces.
         This is used in the evaluation of XPath expressions.
     -->
-    <bean id="commonNamespaces" class="net.shibboleth.utilities.java.support.xml.SimpleNamespaceContext">
+    <bean id="commonNamespaces" parent="mda.SimpleNamespaceContext">
         <constructor-arg>
             <util:map map-class="java.util.HashMap">
                 <entry key="alg"        value-ref="alg_namespace"/>
@@ -642,7 +616,7 @@
         any items that had errors.  Items with just warnings are retained.
     -->
     <bean id="errorAnnouncingFilter" parent="mda.CompositeStage">
-        <property name="composedStages">
+        <property name="stages">
             <list>
                 <ref bean="warningAndErrorAnnouncer"/>
                 <ref bean="errorRemover"/>
@@ -658,7 +632,7 @@
         Warnings are not announced, and do not cause termination.
     -->
     <bean id="errorTerminatingFilter" parent="mda.CompositeStage">
-        <property name="composedStages">
+        <property name="stages">
             <list>
                 <ref bean="errorAnnouncer"/>
                 <ref bean="errorTerminator"/>
@@ -1113,7 +1087,7 @@
         that is left to the caller.
     -->
     <bean id="standardImportActions" parent="mda.CompositeStage">
-        <property name="composedStages">
+        <property name="stages">
             <list>
                 <ref bean="populateItemIds"/>
                 <ref bean="populateRegistrationAuthorities"/>
@@ -1122,8 +1096,8 @@
                     Strip all elements and attributes that are in namespaces
                     other than the ones we accept from partners.
                 -->
-                <bean id="whitelistImportedNamespaces" parent="mda.NamespacesStrippingStage"
-                    p:whitelisting="true">
+                <bean id="keepImportedNamespaces" parent="mda.NamespacesStrippingStage"
+                    p:keeping="true">
                     <property name="namespaces">
                         <set>
                             <ref bean="alg_namespace"/>
@@ -1206,7 +1180,7 @@
         namespaces in the document ready for serialisation.
     -->
     <bean id="standardImportTail" parent="mda.CompositeStage">
-        <property name="composedStages">
+        <property name="stages">
             <list>
                 <!-- announce and remove any entities with errors -->
                 <ref bean="errorAnnouncingFilter"/>
