@@ -13,7 +13,7 @@ services:
       - "-Dserver.servlet.context-path=/md-validator-basic"
       # Attend to the forwarding headers from the reverse proxy
       - "-Dserver.forward-headers-strategy=NATIVE"
-      - "org.springframework.boot.loader.JarLauncher"
+      - "org.springframework.boot.loader.launch.JarLauncher"
     logging:
       driver: "json-file"
       options:
@@ -39,3 +39,4 @@ networks:
   default:
     external: true
     name: traefik
+
