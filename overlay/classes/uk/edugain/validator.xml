@@ -10,11 +10,6 @@
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <!--
-        Import inc-mda beans.
-    -->
-    <import resource="classpath:uk/org/iay/incommon/mda/beans.xml"/>
-
-    <!--
         Import UK federation ingress policy for eduGAIN.
     -->
     <import resource="classpath:uk/edugain-policy.xml"/>
